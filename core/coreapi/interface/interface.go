@@ -31,7 +31,7 @@ type CoreAPI interface {
 	Dag() DagAPI
 
 	ResolvePath(context.Context, Path) (Path, error)
-	ResolveNode(context.Context, Path) (Node, error) //TODO: should this get dropped in favor of DagAPI.Get?
+	ResolveNode(context.Context, Path) (Node, error)
 }
 
 type UnixfsAPI interface {
@@ -41,8 +41,14 @@ type UnixfsAPI interface {
 }
 
 type DagAPI interface {
+	// Put inserts data using specified format and input encoding. If format is
+	// not specified (nil), default dag-cbor/sha256 is used
 	Put(ctx context.Context, src io.Reader, inputEnc string, format *cid.Prefix) ([]Node, error)
+
+	// Get attempts to resolve and get the node specified by the path
 	Get(ctx context.Context, path Path) (Node, error)
+
+	// Tree returns list of paths within a node specified by the path
 	Tree(ctx context.Context, path Path, depth int) ([]Path, error)
 }
 
